@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskManager.Domain.Shared;
 
 namespace TaskManager.BLL.Tasks.DTO.Request
 {
@@ -25,6 +26,10 @@ namespace TaskManager.BLL.Tasks.DTO.Request
     }
     public record GetTaskRequest
     {
-
+        public string Id { get; init; }
+    }
+    public record GetTasksRequest : RequestParameter
+    {
+        
     }
 }

@@ -9,7 +9,7 @@ namespace TaskManager.BLL.Tasks.DTO.Response
     public record GetTaskResponse
     {
         public string Id { get; init; }
-        public string Name { get; init; }
+        public string Title { get; init; }
         public string Description { get; init; }
         public string Priority { get; init; }
         public string StartDate { get; init; }
@@ -18,6 +18,14 @@ namespace TaskManager.BLL.Tasks.DTO.Response
     }
     public record UpdateTaskResponse
     {
-
+        public string Id { get; init; }
+        public string Title { get; init; }
+    }  
+    public record CreateTaskResponse
+    {
+        public string Id { get; init; }
+        public string Title { get; init; }
     } 
+    
+    
 }
