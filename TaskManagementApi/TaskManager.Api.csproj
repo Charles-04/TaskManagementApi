@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TaskManager.Infrastructure\TaskManager.Infrastructure.csproj" />
+    <ProjectReference Include="..\TaskManagement.BLL\TaskManager.BLL.csproj" />
   </ItemGroup>
 
 </Project>
