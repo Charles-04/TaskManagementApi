@@ -1,9 +1,19 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
-using TaskManager.Domain.Context;
+using TaskManager.BLL.Notification.Implementation;
+using TaskManager.BLL.Notification.Interface;
+using TaskManager.BLL.Tasks.Implementation;
+using TaskManager.BLL.Tasks.Interface;
+using TaskManager.BLL.UserAuth.Implementation;
+using TaskManager.BLL.UserAuth.Interface;
 using TaskManager.Domain.Entities;
-
+using TaskManager.Domain.Implementation;
+using TaskManager.Infrastructure.Implementation;
+using TaskManager.Infrastructure.Interface;
+using TaskManager.Persistence.Context;
+using TaskManager.Persistence.Implementation;
+using TaskManager.Persistence.Interface;
 
 namespace TaskManager.Api.Extensions
 {
@@ -13,6 +23,16 @@ namespace TaskManager.Api.Extensions
         public static void RegisterServices(this IServiceCollection services)
         {
             services.AddAutoMapper(Assembly.Load("TaskManager.Infrastructure"));
+            services.AddTransient<IUnitOfWork, UnitOfWork<TaskAppDbContext>>();
+            services.AddTransient<ITaskService, TaskService>();
+            services.AddTransient<IServiceFactory, ServiceFactory>();
+            services.AddTransient<IJwtAuthenticator, JwtAuthenticator>();
+            services.AddTransient<IUserAuthService, UserAuthService>();
+            services.AddTransient<INotificationService, NotificationService>();
+            services.AddScoped<RoleManager<IdentityRole>>();
+            services.AddScoped<UserManager<AppUser>>();
+
+
         }
 
         public static void AddSwaggerGenerator(this IServiceCollection services)

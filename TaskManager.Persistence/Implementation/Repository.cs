@@ -533,15 +533,7 @@ namespace TaskManager.Persistence.Implementation
         }
         
 
-        public static async Task<PagedList<T>> GetPagedItems<T>( IQueryable<T> query, RequestParameter parameters, Expression<Func<T, bool>> searchExpression = null)
-        {
-            var skip = (parameters.PageNumber - 1) * parameters.PageSize;
-            if (searchExpression != null)
-                query = query.Where(searchExpression);
-
-            var items = await query.Skip(skip).Take(parameters.PageSize).ToListAsync();
-            return new PagedList<T>(items, await query.CountAsync(), parameters.PageNumber, parameters.PageSize);
-        }
+       
 
 
 

@@ -3,10 +3,11 @@ using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System;
 using System.Text;
-using TaskManager.Domain.Context;
+
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Api.Filters;
 using TaskManager.Api.Extensions;
+using TaskManager.Persistence.Context;
 
 namespace TaskManagementApi
 {
@@ -20,7 +21,7 @@ namespace TaskManagementApi
             builder.Configuration.AddUserSecrets(Assembly.GetExecutingAssembly(), true);
             string connectionString = builder.Configuration.GetConnectionString("DefaultConnect");
             builder.Services.AddDbContext<TaskAppDbContext>(options => 
-                options.UseSqlServer(connectionString, x => x.MigrationsAssembly("TaskManager.Infrastructure"))
+                options.UseSqlServer(connectionString)
                                 
             );
             builder.Services.AddControllers(setupAction =>
@@ -56,6 +57,7 @@ namespace TaskManagementApi
                       ClockSkew = TimeSpan.Zero
                   };
               });
+            builder.Services.AddAuthorization();
             builder.Services.AddIdentity();
             builder.Services.RegisterServices();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -74,9 +76,10 @@ namespace TaskManagementApi
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
-
+            app.ConfigureException(builder.Environment);
             app.MapControllers();
 
             app.Run();

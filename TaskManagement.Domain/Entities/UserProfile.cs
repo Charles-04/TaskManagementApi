@@ -15,6 +15,7 @@ namespace TaskManager.Domain.Entities
         public Gender Gender { get; set; }
         public bool Active { get; set; }
         public AppUser User { get; set; }
+        public ICollection<Task> AssignedTasks { get; set; }
         public ICollection<Task> Tasks { get; set; }
         public ICollection<Project> Projects { get; set; }
         public DateTime Birthday { get; set; }

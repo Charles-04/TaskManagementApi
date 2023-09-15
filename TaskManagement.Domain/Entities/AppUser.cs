@@ -9,6 +9,7 @@ namespace TaskManager.Domain.Entities
 {
     public class AppUser : IdentityUser<string>
     {
-
+       public string FirstName {get; set;}
+       public string LastName { get; set;}
     }
 }

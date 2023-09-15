@@ -4,9 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TaskManager.Infrastructure.Configurations
+namespace TaskManager.Domain.Enums
 {
-    internal class TaskMappingProfile
+    public enum TaskStatus
     {
+        Done,
+        InProgress,
+        OverDue,
+        Cancelled
     }
 }

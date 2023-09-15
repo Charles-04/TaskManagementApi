@@ -7,18 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Notification\DTO\" />
-    <Folder Include="Notification\Interface\" />
-    <Folder Include="Notification\Implementation\" />
-    <Folder Include="Projects\DTO\" />
-    <Folder Include="Projects\Interface\" />
-    <Folder Include="Projects\Implementation\" />
-    <Folder Include="User\DTO\" />
-    <Folder Include="User\Interface\" />
-    <Folder Include="User\Implementation\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\TaskManager.Infrastructure\TaskManager.Infrastructure.csproj" />
     <ProjectReference Include="..\TaskManager.Persistence\TaskManager.Persistence.csproj" />
   </ItemGroup>
