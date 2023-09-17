@@ -29,6 +29,7 @@ namespace TaskManagementApi
                 setupAction.Filters.Add<ValidateModelAttribute>();
 
             });
+
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -63,7 +64,7 @@ namespace TaskManagementApi
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGenerator();
-          
+            builder.Services.AddHangFire(connectionString);
 
            var app = builder.Build();
 
@@ -80,6 +81,7 @@ namespace TaskManagementApi
             app.UseAuthorization();
 
             app.ConfigureException(builder.Environment);
+            app.ConfigureJobs(builder.Environment);
             app.MapControllers();
 
             app.Run();

@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Hangfire;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using TaskManager.BLL.Interface.WorkerServices;
 using TaskManager.BLL.Notification.Implementation;
 using TaskManager.BLL.Notification.Interface;
+using TaskManager.BLL.Notification.WorkerService;
 using TaskManager.BLL.Tasks.Implementation;
 using TaskManager.BLL.Tasks.Interface;
 using TaskManager.BLL.UserAuth.Implementation;
@@ -19,10 +22,10 @@ namespace TaskManager.Api.Extensions
 {
     public static class Configurations
     {
-        
+
         public static void RegisterServices(this IServiceCollection services)
         {
-            services.AddAutoMapper(Assembly.Load("TaskManager.Infrastructure"));
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddTransient<IUnitOfWork, UnitOfWork<TaskAppDbContext>>();
             services.AddTransient<ITaskService, TaskService>();
             services.AddTransient<IServiceFactory, ServiceFactory>();
@@ -31,10 +34,19 @@ namespace TaskManager.Api.Extensions
             services.AddTransient<INotificationService, NotificationService>();
             services.AddScoped<RoleManager<IdentityRole>>();
             services.AddScoped<UserManager<AppUser>>();
+            services.AddScoped<INotificationWorkerService, NotificationWorkerService>();
 
 
         }
+        public static void AddHangFire(this IServiceCollection services, string connectionString)
+        {
+            services.AddHangfire(configuration => configuration
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseSqlServerStorage(connectionString));
 
+        }
         public static void AddSwaggerGenerator(this IServiceCollection services)
         {
             services.AddSwaggerGen(c =>
