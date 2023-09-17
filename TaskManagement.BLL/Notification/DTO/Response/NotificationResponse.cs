@@ -18,6 +18,7 @@ namespace TaskManager.BLL.Notification.DTO.Response
         public string NotificationType { get; init; }
         public string Receiver { get; init; }
         public string Message { get; init; }
+        public string Id { get; init; }
         
     }
     public class GetUnreadNotificationsResponse : GetNotificationResponse

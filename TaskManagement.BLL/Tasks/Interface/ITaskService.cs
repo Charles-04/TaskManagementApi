@@ -7,7 +7,7 @@ namespace TaskManager.BLL.Tasks.Interface
 {
     public interface ITaskService
     {
-        Task<PagedResponse<GetTaskResponse>> GetTasks(GetTasksRequest request);
+        Task<PagedResponse<GetTaskResponse>> GetTasks(string userId,GetTasksRequest request);
         Task<Response<CreateTaskResponse>> CreateTask(string userId, CreateTaskRequest request);
         Task<string> DeleteTask(string userId, DeleteTaskRequest request);
         Task<Response<UpdateTaskResponse>> UpdateTask(string userId, UpdateTaskRequest request);

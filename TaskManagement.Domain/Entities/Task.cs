@@ -6,6 +6,10 @@ namespace TaskManager.Domain.Entities
 {
     public class Task
     {
+        public Task()
+        {
+            Id = Guid.NewGuid().ToString();
+        }
         public string Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }

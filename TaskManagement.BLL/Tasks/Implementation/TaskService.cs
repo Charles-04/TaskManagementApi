@@ -99,9 +99,11 @@ namespace TaskManager.BLL.Tasks.Implementation
             
         }
 
-        public async Task<PagedResponse<GetTaskResponse>> GetTasks(GetTasksRequest request)
+        public async Task<PagedResponse<GetTaskResponse>> GetTasks(string userId,GetTasksRequest request)
         {
-            var tasks = _taskRepository.GetQueryable();
+            var user = await _userRepository.GetSingleByAsync(u => u.UserId == userId);
+            user.CheckNull("User doesn't exist");
+            var tasks = _taskRepository.GetQueryable(t => t.AssigneeId == user.Id || t.AuthorId == user.Id);
             var pagedtasks = tasks.GetPagedItems(request);
             var response = _mapper.Map<PagedResponse<GetTaskResponse>>(pagedtasks);
             return response;

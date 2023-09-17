@@ -8,6 +8,10 @@ namespace TaskManager.Domain.Entities
 {
     public class Project
     {
+        public Project()
+        {
+            Id = Guid.NewGuid().ToString();
+        }
         public string Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }

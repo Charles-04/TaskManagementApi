@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,9 @@ namespace TaskManager.BLL.Notification.Implementation
         }
         public async Task<Response<DeleteNotificationResponse>> DeleteNotification(string userId, DeleteNotificationRequest request)
         {
-            var notification = await _notificationRepository.GetSingleByAsync(x => x.UserId == userId && x.Id == request.Id);
+            var user = await _userRepository.GetSingleByAsync(u => u.UserId == userId);
+            user.CheckNull("User doesn't exist");
+            var notification = await _notificationRepository.GetSingleByAsync(x => x.UserId == user.Id && x.Id == request.Id);
             notification.CheckNull("Notification not found");
             await _notificationRepository.DeleteAsync(notification);
             var response = new DeleteNotificationResponse
@@ -52,7 +55,9 @@ namespace TaskManager.BLL.Notification.Implementation
 
         public async Task<PagedResponse<GetNotificationResponse>> GetNotifications(string userId,GetNotificationRequest request)
         {
-            var notifications = _notificationRepository.GetQueryable(n => n.UserId == userId);
+            var user = await _userRepository.GetSingleByAsync(u => u.UserId == userId);
+            user.CheckNull("User doesn't exist");
+            var notifications = _notificationRepository.GetQueryable(n => n.UserId == user.Id).Include(x => x.User); 
             PagedList<Notifications> pagedNotifications = await notifications.GetPagedItems(request);
             return  _mapper.Map<PagedResponse<GetNotificationResponse>>(pagedNotifications);
 
@@ -60,7 +65,10 @@ namespace TaskManager.BLL.Notification.Implementation
 
         public async Task<PagedResponse<GetUnreadNotificationsResponse>> GetUnreadNotifications(string userId, GetUnreadNotificationsRequest request)
         {
-            var notifications = _notificationRepository.GetQueryable(n => n.UserId == userId && n.IsRead == false);
+            var user = await _userRepository.GetSingleByAsync(u => u.UserId == userId);
+            user.CheckNull("User doesn't exist");
+            var notifications = _notificationRepository.GetQueryable(n => n.UserId == user.Id && n.IsRead == false)
+                .Include(x => x.User);
             PagedList<Notifications> pagedNotifications = await notifications.GetPagedItems(request);
             return _mapper.Map<PagedResponse<GetUnreadNotificationsResponse>>(pagedNotifications);
         }
@@ -69,7 +77,7 @@ namespace TaskManager.BLL.Notification.Implementation
         {
             Notifications notification = _notificationRepository.GetById(request.Id);
             notification.CheckNull("Notification not found");
-            var user = await _userRepository.GetByIdAsync(userId);
+            var user = await _userRepository.GetSingleByAsync(u => u.UserId == userId);
             user.CheckNull("Profile doesn't exist");
             if (notification.UserId != user.Id)
                 throw new InvalidOperationException("Notification doesn't belong to  you");

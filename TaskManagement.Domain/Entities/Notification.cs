@@ -9,6 +9,10 @@ namespace TaskManager.Domain.Entities
 {
     public class Notification
     {
+        public Notification()
+        {
+            Id = Guid.NewGuid().ToString();
+        }
         public string Id { get; set; }
         public string Title { get; set; }
         public string Message { get; set; }
