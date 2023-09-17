@@ -8,6 +8,7 @@ namespace TaskManager.Domain.Enums
 {
     public enum NotificationType
     {
+        TaskAssignmentReminder,
         CreateTaskReminder,
         ProjectUpdateReminder,
         TaskStatusUpdate,
