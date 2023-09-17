@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TaskManager.BLL.Tasks.DTO.Response
 {
-    public record GetTaskResponse
+    public class GetTaskResponse
     {
         public string Id { get; init; }
         public string Title { get; init; }

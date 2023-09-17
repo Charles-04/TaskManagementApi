@@ -2,8 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using TaskManager.BLL.Extensions;
 using TaskManager.BLL.Notification.Interface;
-using TaskManager.BLL.Projects.DTO.Request;
-using TaskManager.BLL.Projects.DTO.Response;
 using TaskManager.BLL.Tasks.DTO.Request;
 using TaskManager.BLL.Tasks.DTO.Response;
 using TaskManager.BLL.Tasks.Interface;
@@ -46,6 +44,9 @@ namespace TaskManager.BLL.Tasks.Implementation
 
             if (!author.Active)
                 throw new InvalidOperationException("Account Inactive!!");
+
+            if (request.StartTime < DateTime.Now)
+                throw new InvalidOperationException("A task can't start on a previous date or time");
             Todo task = _mapper.Map<Todo>(request);
             task.AuthorId = author.Id;
             var newTask = await _taskRepository.AddAsync(task);
@@ -98,11 +99,11 @@ namespace TaskManager.BLL.Tasks.Implementation
             
         }
 
-        public async Task<PagedResponse<IEnumerable<GetTaskResponse>>> GetTasks(GetTasksRequest request)
+        public async Task<PagedResponse<GetTaskResponse>> GetTasks(GetTasksRequest request)
         {
             var tasks = _taskRepository.GetQueryable();
             var pagedtasks = tasks.GetPagedItems(request);
-            var response = _mapper.Map<PagedResponse<IEnumerable<GetTaskResponse>>>(pagedtasks);
+            var response = _mapper.Map<PagedResponse<GetTaskResponse>>(pagedtasks);
             return response;
         }
 
@@ -194,6 +195,38 @@ namespace TaskManager.BLL.Tasks.Implementation
                 Message = "Task removed from project"
             };
            
+        }
+
+        public async Task<Response<UpdateTaskAssignmentResponse>> AssignTask(UpdateTaskAssignmentRequest request)
+        {
+            UserProfile userProfile = await _userRepository.GetByIdAsync(request.AssigneeId);
+            userProfile.CheckNull("User doesn't exist");
+            if (!userProfile.Active)
+                throw new InvalidOperationException("You can't assign task to an inactive user");
+            Todo task = await _taskRepository.GetByIdAsync(request.TaskId);
+            task.CheckNull("Task Doesn't Exist");
+            var assignedTask = _mapper.Map<Todo>(request);
+            var response = await _taskRepository.UpdateAsync(assignedTask);
+
+            SendNotificationRequest notification = new SendNotificationRequest
+            {
+                Title = "Task Assigned",
+                Message = $"A task has been assigned to you",
+                NotificationType = NotificationType.TaskAssignmentReminder,
+                ReceiverId = assignedTask.AssigneeId!
+
+            };
+            await _notificationService.SendNotification(notification);
+            var result = _mapper.Map<UpdateTaskAssignmentResponse>(response);
+
+            return new Response<UpdateTaskAssignmentResponse>
+            {
+                Success = true,
+                Message = "Task assigned",
+                Result = result,
+            };
+
+             throw new NotImplementedException();
         }
     }
 }

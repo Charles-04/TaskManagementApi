@@ -13,8 +13,8 @@ namespace TaskManager.BLL.Notification.Interface
     {
         Task<Response<SendNotificationResponse>> SendNotification(SendNotificationRequest request);
         Task<Response<ReadNotificationResponse>> ReadNotification(string userId, ReadNotificationRequest request);
-        Task<PagedResponse<IEnumerable<GetNotificationResponse>>> GetNotifications(string userId, GetNotificationRequest request);
-        Task<PagedResponse<IEnumerable<GetUnreadNotificationsResponse>>> GetUnreadNotifications(string userId, GetUnreadNotificationsRequest request);
+        Task<PagedResponse<GetNotificationResponse>> GetNotifications(string userId, GetNotificationRequest request);
+        Task<PagedResponse<GetUnreadNotificationsResponse>> GetUnreadNotifications(string userId, GetUnreadNotificationsRequest request);
         Task<Response<DeleteNotificationResponse>> DeleteNotification(string userId, DeleteNotificationRequest request);
 
     }

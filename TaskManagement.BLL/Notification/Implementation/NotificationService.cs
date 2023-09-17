@@ -50,19 +50,19 @@ namespace TaskManager.BLL.Notification.Implementation
             
         }
 
-        public async Task<PagedResponse<IEnumerable<GetNotificationResponse>>> GetNotifications(string userId,GetNotificationRequest request)
+        public async Task<PagedResponse<GetNotificationResponse>> GetNotifications(string userId,GetNotificationRequest request)
         {
             var notifications = _notificationRepository.GetQueryable(n => n.UserId == userId);
             PagedList<Notifications> pagedNotifications = await notifications.GetPagedItems(request);
-            return  _mapper.Map<PagedResponse<IEnumerable<GetNotificationResponse>>>(pagedNotifications);
+            return  _mapper.Map<PagedResponse<GetNotificationResponse>>(pagedNotifications);
 
         }
 
-        public async Task<PagedResponse<IEnumerable<GetUnreadNotificationsResponse>>> GetUnreadNotifications(string userId, GetUnreadNotificationsRequest request)
+        public async Task<PagedResponse<GetUnreadNotificationsResponse>> GetUnreadNotifications(string userId, GetUnreadNotificationsRequest request)
         {
             var notifications = _notificationRepository.GetQueryable(n => n.UserId == userId && n.IsRead == false);
             PagedList<Notifications> pagedNotifications = await notifications.GetPagedItems(request);
-            return _mapper.Map<PagedResponse<IEnumerable<GetUnreadNotificationsResponse>>>(pagedNotifications);
+            return _mapper.Map<PagedResponse<GetUnreadNotificationsResponse>>(pagedNotifications);
         }
 
         public async Task<Response<ReadNotificationResponse>> ReadNotification(string userId,ReadNotificationRequest request)
