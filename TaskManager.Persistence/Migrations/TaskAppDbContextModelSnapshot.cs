@@ -250,7 +250,13 @@ namespace TaskManager.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Notifications");
                 });
@@ -285,7 +291,6 @@ namespace TaskManager.Persistence.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("AssigneeId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("AuthorId")
@@ -315,12 +320,6 @@ namespace TaskManager.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserProfileId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UserProfileId1")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AssigneeId");
@@ -328,10 +327,6 @@ namespace TaskManager.Persistence.Migrations
                     b.HasIndex("AuthorId");
 
                     b.HasIndex("ProjectId");
-
-                    b.HasIndex("UserProfileId");
-
-                    b.HasIndex("UserProfileId1");
 
                     b.ToTable("Tasks");
                 });
@@ -416,6 +411,17 @@ namespace TaskManager.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("TaskManager.Domain.Entities.Notification", b =>
+                {
+                    b.HasOne("TaskManager.Domain.Entities.UserProfile", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("TaskManager.Domain.Entities.Project", b =>
                 {
                     b.HasOne("TaskManager.Domain.Entities.UserProfile", "Owner")
@@ -430,28 +436,19 @@ namespace TaskManager.Persistence.Migrations
             modelBuilder.Entity("TaskManager.Domain.Entities.Task", b =>
                 {
                     b.HasOne("TaskManager.Domain.Entities.UserProfile", "Assignee")
-                        .WithMany()
+                        .WithMany("AssignedTasks")
                         .HasForeignKey("AssigneeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("TaskManager.Domain.Entities.UserProfile", "Author")
-                        .WithMany()
+                        .WithMany("Tasks")
                         .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("TaskManager.Domain.Entities.Project", "Project")
                         .WithMany("Tasks")
                         .HasForeignKey("ProjectId");
-
-                    b.HasOne("TaskManager.Domain.Entities.UserProfile", null)
-                        .WithMany("AssignedTasks")
-                        .HasForeignKey("UserProfileId");
-
-                    b.HasOne("TaskManager.Domain.Entities.UserProfile", null)
-                        .WithMany("Tasks")
-                        .HasForeignKey("UserProfileId1");
 
                     b.Navigation("Assignee");
 

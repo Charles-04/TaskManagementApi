@@ -12,8 +12,8 @@ using TaskManager.Persistence.Context;
 namespace TaskManager.Persistence.Migrations
 {
     [DbContext(typeof(TaskAppDbContext))]
-    [Migration("20230912112331_AddDAO")]
-    partial class AddDAO
+    [Migration("20230915211235_InitialDb")]
+    partial class InitialDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -176,6 +176,14 @@ namespace TaskManager.Persistence.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -244,7 +252,13 @@ namespace TaskManager.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Notifications");
                 });
@@ -278,7 +292,17 @@ namespace TaskManager.Persistence.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("AssigneeId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AssigneeId1")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("AuthorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AuthorId1")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
@@ -298,13 +322,22 @@ namespace TaskManager.Persistence.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AssigneeId");
+
+                    b.HasIndex("AssigneeId1");
+
                     b.HasIndex("AuthorId");
+
+                    b.HasIndex("AuthorId1");
 
                     b.HasIndex("ProjectId");
 
@@ -391,6 +424,17 @@ namespace TaskManager.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("TaskManager.Domain.Entities.Notification", b =>
+                {
+                    b.HasOne("TaskManager.Domain.Entities.UserProfile", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("TaskManager.Domain.Entities.Project", b =>
                 {
                     b.HasOne("TaskManager.Domain.Entities.UserProfile", "Owner")
@@ -404,17 +448,36 @@ namespace TaskManager.Persistence.Migrations
 
             modelBuilder.Entity("TaskManager.Domain.Entities.Task", b =>
                 {
-                    b.HasOne("TaskManager.Domain.Entities.UserProfile", "Author")
+                    b.HasOne("TaskManager.Domain.Entities.UserProfile", null)
+                        .WithMany("AssignedTasks")
+                        .HasForeignKey("AssigneeId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("TaskManager.Domain.Entities.UserProfile", "Assignee")
+                        .WithMany()
+                        .HasForeignKey("AssigneeId1");
+
+                    b.HasOne("TaskManager.Domain.Entities.UserProfile", null)
                         .WithMany("Tasks")
                         .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("TaskManager.Domain.Entities.UserProfile", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TaskManager.Domain.Entities.Project", null)
+                    b.HasOne("TaskManager.Domain.Entities.Project", "Project")
                         .WithMany("Tasks")
                         .HasForeignKey("ProjectId");
 
+                    b.Navigation("Assignee");
+
                     b.Navigation("Author");
+
+                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("TaskManager.Domain.Entities.UserProfile", b =>
@@ -435,6 +498,8 @@ namespace TaskManager.Persistence.Migrations
 
             modelBuilder.Entity("TaskManager.Domain.Entities.UserProfile", b =>
                 {
+                    b.Navigation("AssignedTasks");
+
                     b.Navigation("Projects");
 
                     b.Navigation("Tasks");

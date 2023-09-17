@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Domain.Entities;
-using Todo = TaskManager.Domain.Entities.Task;
+using Task = TaskManager.Domain.Entities.Task;
 
 namespace TaskManager.Persistence.Context
 {
@@ -14,30 +14,25 @@ namespace TaskManager.Persistence.Context
         {
         }
         DbSet<Notification> Notifications { get; set; }
-        DbSet<Todo> Tasks { get; set; }
+        DbSet<Task> Tasks { get; set; }
         DbSet<UserProfile> UserProfiles { get; set; }
         DbSet<Project> Projects { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.Entity<UserProfile>(t =>
-            {
-                
-                t.HasMany<Todo>().WithOne(t => t.Assignee).HasForeignKey(t => t.AssigneeId);
-            });
-            builder.Entity<UserProfile>(t =>
-            {
-                t.HasMany<Todo>().WithOne(t => t.Author).HasForeignKey(t => t.AuthorId).IsRequired();
-            });
 
-            builder.Entity<Todo>(t =>
-            {
-                t.HasOne<UserProfile>().WithMany(t => t.AssignedTasks);
-            });
-            builder.Entity<Todo>(t =>
-            {
-                t.HasOne<UserProfile>().WithMany(t => t.Tasks);
-            });
+
+            builder.Entity<UserProfile>()
+      .HasMany(up => up.AssignedTasks)
+      .WithOne(t => t.Assignee)
+      .HasForeignKey(t => t.AssigneeId)
+      .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<UserProfile>()
+                .HasMany(up => up.Tasks)
+                .WithOne(t => t.Author)
+                .HasForeignKey(t => t.AuthorId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
