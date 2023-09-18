@@ -29,4 +29,8 @@ namespace TaskManager.BLL.Projects.DTO.Response
         public IEnumerable<GetTaskResponse> Tasks { get; init;}
     }
   
+    public record DeleteProjectResponse
+    {
+        public string Id { get; init; }
+    }
 }

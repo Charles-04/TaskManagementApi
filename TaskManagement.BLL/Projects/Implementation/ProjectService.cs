@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using TaskManager.BLL.Extensions;
 using TaskManager.BLL.Projects.DTO.Request;
 using TaskManager.BLL.Projects.DTO.Response;
@@ -49,6 +50,22 @@ namespace TaskManager.BLL.Projects.Implementation
 
         }
 
+        public async Task<Response<string>> DeleteProject(string userId, string Id)
+        {
+            UserProfile user = await _userProfileRepository.GetSingleByAsync(x => x.UserId == userId);
+            user.CheckNull("User Profile doesn't exist for this user!! Create one");
+
+            
+            Project project = await _projectRepository.GetSingleByAsync(x => x.Id == Id && x.OwnerId == user.Id);
+            project.CheckNull($"Task with id {Id} doesn't exist for user");
+            await _taskRepository.DeleteByIdAsync(project.Id);
+            return new Response<string> 
+            { 
+                Success = true,
+                Result = $"Task Deleted" 
+            };
+            
+        }
 
         public async Task<Response<UpdateProjectResponse>> UpdateProject(string userId, UpdateProjectRequest request)
         {
@@ -70,9 +87,23 @@ namespace TaskManager.BLL.Projects.Implementation
 
 
         }
-        public async Task<Response<ViewProjectResponse>> ViewProject(ViewProjectRequest request)
+       
+
+        public async Task<Response<ViewProjectResponse>> ViewProject(string userId, ViewProjectRequest request)
         {
-            throw new NotImplementedException();
+            UserProfile userProfile = await _userProfileRepository.GetSingleByAsync(u => u.UserId == userId);
+            userProfile.CheckNull("Profile doesn't exist");
+            Project project = await _projectRepository.GetSingleByAsync(x => x.Id == request.Id && x.OwnerId == userProfile.Id, 
+                                                                        include : x => x.Include(o => o.Owner));
+            project.CheckNull("Project not found");
+            var response = _mapper.Map<ViewProjectResponse>(project);
+            return new Response<ViewProjectResponse>
+            {
+                Success = true,
+                Message = "Project retrieved",
+                Result = response
+            };
+           
         }
     }
 }
