@@ -33,7 +33,7 @@ namespace TaskManager.Api.Controllers
 
         }
         [HttpGet("view-all-notifications")]
-        [SwaggerOperation("Gets unread notifications")]
+        [SwaggerOperation("Gets all notifications")]
         public async Task<IActionResult> ViewAllNotifications([FromQuery]GetNotificationRequest request)
         {
             string userId = GetUserId();

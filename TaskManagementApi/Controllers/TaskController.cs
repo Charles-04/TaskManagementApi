@@ -20,7 +20,7 @@ namespace TaskManager.Api.Controllers
         private ITaskService _taskService;
         public TaskController(IServiceFactory serviceFactory)
         {
-             _serviceFactory = serviceFactory;
+            _serviceFactory = serviceFactory;
             _taskService = _serviceFactory.GetService<ITaskService>();
         }
 
@@ -41,6 +41,24 @@ namespace TaskManager.Api.Controllers
             var response = await _taskService.UpdateTask(userId, request);
             return Ok(response);
 
+        } 
+        [HttpGet("task")]
+        [SwaggerOperation("Retrieves a task")]
+        public async Task<IActionResult> GetTask(GetTaskRequest request)
+        {
+            string userId = GetUserId();
+            var response = await _taskService.GetTaskById(request);
+            return Ok(response);
+
+        }
+        [HttpGet("tasks")]
+        [SwaggerOperation("Retrieves a task")]
+        public async Task<IActionResult> GetTasks(GetTasksRequest request)
+        {
+            string userId = GetUserId();
+            var response = await _taskService.GetTasks(userId,request);
+            return Ok(response);
+
         }
 
         [HttpPut("add-task-to-project")]
@@ -49,6 +67,24 @@ namespace TaskManager.Api.Controllers
         {
             
             var response = await _taskService.AddToProject(request);
+            return Ok(response);
+
+        }
+        [HttpPut("assign-task")]
+        [SwaggerOperation("Assigns a task to a user")]
+        public async Task<IActionResult> AssignTask(UpdateTaskAssignmentRequest request)
+        {
+            
+            var response = await _taskService.AssignTask(request);
+            return Ok(response);
+
+        }
+        [HttpDelete("delete-task")]
+        [SwaggerOperation("deletes a task")]
+        public async Task<IActionResult> DeleteTask(DeleteTaskRequest request)
+        {
+            string userId = GetUserId();
+            var response = await _taskService.DeleteTask(userId,request);
             return Ok(response);
 
         }

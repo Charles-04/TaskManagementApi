@@ -40,6 +40,24 @@ namespace TaskManager.Api.Controllers
             var response = await _projectService.UpdateProject(userId, request);
             return Ok(response);
 
+        } 
+        [HttpGet("view-project")]
+        [SwaggerOperation("Gets an existing project")]
+        public async Task<IActionResult> GetProject(ViewProjectRequest request)
+        {
+            string userId = GetUserId();
+            var response = await _projectService.ViewProject(userId, request);
+            return Ok(response);
+
+        }  
+        [HttpDelete("delete-project/{Id}")]
+        [SwaggerOperation("Deletes an existing project")]
+        public async Task<IActionResult> DeleteProject([FromRoute]string Id)
+        {
+            string userId = GetUserId();
+            var response = await _projectService.DeleteProject(userId, Id);
+            return Ok(response);
+
         }
     }
 }
