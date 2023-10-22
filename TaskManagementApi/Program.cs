@@ -19,7 +19,7 @@ namespace TaskManagementApi
 
             // Add services to the container.
             builder.Configuration.AddUserSecrets(Assembly.GetExecutingAssembly(), true);
-            string connectionString = builder.Configuration.GetConnectionString("DefaultConnect");
+            string connectionString = builder.Configuration.GetConnectionString("DefaultConn");
             builder.Services.AddDbContext<TaskAppDbContext>(options => 
                 options.UseSqlServer(connectionString)
                                 
