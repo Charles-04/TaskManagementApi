@@ -49,6 +49,7 @@ namespace TaskManager.BLL.Tasks.Implementation
                 throw new InvalidOperationException("A task can't start on a previous date or time");
             Todo task = _mapper.Map<Todo>(request);
             task.AuthorId = author.Id;
+            task.AssigneeId = request.AssigneeId == null  ? author.Id :  request.AssigneeId;
             var newTask = await _taskRepository.AddAsync(task);
             SendNotificationRequest notification = new SendNotificationRequest
             {
