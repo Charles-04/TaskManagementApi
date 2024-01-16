@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Bcpg;
+using System.Security.Claims;
 using TaskManager.BLL.Extensions;
 using TaskManager.BLL.Projects.DTO.Request;
 using TaskManager.BLL.Projects.DTO.Response;
@@ -19,7 +22,9 @@ namespace TaskManager.BLL.Projects.Implementation
         private readonly IRepository<Project> _projectRepository;
         private readonly IRepository<UserProfile> _userProfileRepository;
         private readonly IMapper _mapper;
-        public ProjectService(IServiceFactory serviceFactory)
+        private readonly IHttpContextAccessor _contextAccessor;
+        private string userId;
+        public ProjectService(IServiceFactory serviceFactory, IHttpContextAccessor contextAccessor)
         {
             _serviceFactory = serviceFactory;
             _unitOfWork = serviceFactory.GetService<IUnitOfWork>();
@@ -27,7 +32,8 @@ namespace TaskManager.BLL.Projects.Implementation
             _taskRepository = _unitOfWork.GetRepository<Todo>();
             _projectRepository = _unitOfWork.GetRepository<Project>();
             _userProfileRepository = _unitOfWork.GetRepository<UserProfile>();
-
+            _contextAccessor = contextAccessor;
+            userId = _contextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
         }
 
 
@@ -65,6 +71,21 @@ namespace TaskManager.BLL.Projects.Implementation
                 Result = $"Task Deleted" 
             };
             
+        }
+
+        public async Task<Response<UserProjectResponse>> GetUserProjects()
+        {
+            IQueryable<Project> projects = _projectRepository.GetQueryable(p => p.OwnerId == userId);
+            UserProjectResponse result = new UserProjectResponse
+            {
+                ProjectCount = projects.Count(),
+            };
+
+            return new Response<UserProjectResponse>
+            {
+                Success = true,
+                Result = result,
+            };
         }
 
         public async Task<Response<UpdateProjectResponse>> UpdateProject(string userId, UpdateProjectRequest request)

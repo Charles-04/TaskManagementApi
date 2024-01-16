@@ -10,6 +10,6 @@ namespace TaskManager.BLL.Projects.Interface
         Task<Response<UpdateProjectResponse>> UpdateProject(string userId,UpdateProjectRequest request);
         Task<Response<string>> DeleteProject(string userId, string projectId);
         Task<Response<ViewProjectResponse>> ViewProject (string userId, ViewProjectRequest request);
-       
+        Task<Response<UserProjectResponse>> GetUserProjects();
     }
 }

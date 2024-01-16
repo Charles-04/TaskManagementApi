@@ -33,4 +33,8 @@ namespace TaskManager.BLL.Projects.DTO.Response
     {
         public string Id { get; init; }
     }
+    public record UserProjectResponse
+    {
+        public int ProjectCount { get; init; }
+    }
 }
