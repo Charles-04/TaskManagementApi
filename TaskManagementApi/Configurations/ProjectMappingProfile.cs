@@ -18,6 +18,7 @@ namespace TaskManager.Infrastructure.Configurations
             CreateMap<UpdateProjectRequest, Project>();
             CreateMap<Project,CreateProjectResponse>();
             CreateMap<Project,UpdateProjectResponse>();
+            CreateMap<Project,ViewProjectResponse>();
             
         }
         

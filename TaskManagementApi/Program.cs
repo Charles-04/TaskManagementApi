@@ -1,3 +1,5 @@
+#nullable disable
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
@@ -19,7 +21,7 @@ namespace TaskManagementApi
 
             // Add services to the container.
             builder.Configuration.AddUserSecrets(Assembly.GetExecutingAssembly(), true);
-            string connectionString = builder.Configuration.GetConnectionString("DefaultConn");
+            string connectionString = builder.Configuration.GetConnectionString("DefaultConn")!;
             builder.Services.AddDbContext<TaskAppDbContext>(options => 
                 options.UseSqlServer(connectionString)
                                 
@@ -60,7 +62,7 @@ namespace TaskManagementApi
               });
             builder.Services.AddAuthorization();
             builder.Services.AddIdentity();
-            builder.Services.RegisterServices();
+            builder.Services.RegisterServices(builder.Configuration);
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGenerator();

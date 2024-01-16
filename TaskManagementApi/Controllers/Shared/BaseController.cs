@@ -16,5 +16,7 @@ namespace TaskManager.Api.Controllers.Shared
             string userId = user.FindFirstValue("Id")!;
             return userId;
         }
+
+
     }
 }

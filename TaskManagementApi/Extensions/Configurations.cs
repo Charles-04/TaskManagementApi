@@ -6,6 +6,10 @@ using TaskManager.BLL.Interface.WorkerServices;
 using TaskManager.BLL.Notification.Implementation;
 using TaskManager.BLL.Notification.Interface;
 using TaskManager.BLL.Notification.WorkerService;
+using TaskManager.BLL.Profile.Implementations;
+using TaskManager.BLL.Profile.Interfaces;
+using TaskManager.BLL.Projects.Implementation;
+using TaskManager.BLL.Projects.Interface;
 using TaskManager.BLL.Tasks.Implementation;
 using TaskManager.BLL.Tasks.Interface;
 using TaskManager.BLL.UserAuth.Implementation;
@@ -23,7 +27,7 @@ namespace TaskManager.Api.Extensions
     public static class Configurations
     {
 
-        public static void RegisterServices(this IServiceCollection services)
+        public static void RegisterServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddTransient<IUnitOfWork, UnitOfWork<TaskAppDbContext>>();
@@ -32,7 +36,11 @@ namespace TaskManager.Api.Extensions
             services.AddTransient<IJwtAuthenticator, JwtAuthenticator>();
             services.AddTransient<IUserAuthService, UserAuthService>();
             services.AddTransient<INotificationService, NotificationService>();
+            services.AddTransient<IProjectService, ProjectService>();
+            services.AddTransient<IProfileService, ProfileService>();
+            services.AddHttpContextAccessor();
             services.AddScoped<RoleManager<IdentityRole>>();
+            services.AddSingleton<IEmailConfiguration>(configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>());
             services.AddScoped<UserManager<AppUser>>();
             services.AddScoped<INotificationWorkerService, NotificationWorkerService>();
 
@@ -62,7 +70,7 @@ namespace TaskManager.Api.Extensions
                     Scheme = "Bearer",
                     BearerFormat = "JWT",
                     In = ParameterLocation.Header,
-                    Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\""
+                    Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1s5af4sf34-4940#93.3er-394-sdfdfd\""
                 });
 
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement

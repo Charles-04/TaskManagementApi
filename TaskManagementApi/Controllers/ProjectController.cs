@@ -43,7 +43,7 @@ namespace TaskManager.Api.Controllers
         } 
         [HttpGet("view-project")]
         [SwaggerOperation("Gets an existing project")]
-        public async Task<IActionResult> GetProject(ViewProjectRequest request)
+        public async Task<IActionResult> GetProject([FromQuery]ViewProjectRequest request)
         {
             string userId = GetUserId();
             var response = await _projectService.ViewProject(userId, request);
