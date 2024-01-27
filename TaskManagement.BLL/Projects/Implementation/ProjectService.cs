@@ -73,19 +73,14 @@ namespace TaskManager.BLL.Projects.Implementation
             
         }
 
-        public async Task<Response<UserProjectResponse>> GetUserProjects()
+        public async Task<UserProjectResponse> GetUserProjects()
         {
             IQueryable<Project> projects = _projectRepository.GetQueryable(p => p.OwnerId == userId);
             UserProjectResponse result = new UserProjectResponse
             {
                 ProjectCount = projects.Count(),
             };
-
-            return new Response<UserProjectResponse>
-            {
-                Success = true,
-                Result = result,
-            };
+            return result;
         }
 
         public async Task<Response<UpdateProjectResponse>> UpdateProject(string userId, UpdateProjectRequest request)
